@@ -8,10 +8,10 @@ function update() {
     const words = inputWords.value.trim().split(/\s+/g);
     // console.log(words);
     inputWords.value = "";
-    for (var i=0; i < words.length; i++) {
-        var currentWord = words[i];
+    for (let i=0; i < words.length; i++) {
+        let currentWord = words[i];
         if(!foundWords.has(currentWord)) {
-            score += currentWord.length;
+            score += currentWord.length == 4 ? 1 : currentWord.length;
             let uniqueChars = new Set();
             for(let j=0; j < currentWord.length; j++) {
                 uniqueChars.add(currentWord[j].toLowerCase());
