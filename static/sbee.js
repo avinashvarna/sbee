@@ -7,7 +7,7 @@ const hintsPlaceholder = document.getElementById("hints");
 var score = 0;
 const foundWords = new Set();
 const hints = new Map();
-
+const twoLetters = new Map();
 
 const appendAlert = (message, type) => {
   const wrapper = document.createElement('div')
@@ -22,7 +22,6 @@ const appendAlert = (message, type) => {
         bootstrap.Alert.getOrCreateInstance(document.querySelector(".alert")).close();
     }, 1000)
 }
-
 
 function init() {
     const ansArray = [...answers];
@@ -39,6 +38,11 @@ function init() {
         }
         arr = hints.get(start);
         arr[answer.length-1] += 1;
+        start = answer.slice(0, 2);
+        if(!twoLetters.has(start)) {
+            twoLetters.set(start, 0);
+        }
+        twoLetters.set(start, twoLetters.get(start)+1);
     }
     if(localStorage.getItem("sbee.date") == new Date().toLocaleDateString()) {
         wordList = localStorage.getItem("sbee.wordList");
@@ -66,6 +70,8 @@ function update(wordList) {
             foundWords.add(currentWord);
             arr = hints.get(currentWord[0]);
             arr[currentWord.length-1] -= 1;
+            start = currentWord.slice(0, 2);
+            twoLetters.set(start, twoLetters.get(start)-1);
         } else {
             if(currentWord !== "") appendAlert(`Invalid answer: ${currentWord}`, "danger");
         }
@@ -99,6 +105,13 @@ function updateHintsAndAnswers() {
     if(pangrams.size > 0) {
         s += "<p> <b>Pangrams:</b> " + pangrams.size + "</p>";
     }
+    const letters = Array.from(twoLetters.keys()).sort();
+    s += "<p>";
+    for(c of letters) {
+        let count = twoLetters.get(c);
+        if (count > 0) s += `${c.toUpperCase()} - ${count} `;
+    }
+    s += "</p>";
     hintsPlaceholder.innerHTML = s;
 
     s = ansArray.join(" ");
@@ -111,12 +124,3 @@ function updateHintsAndAnswers() {
 function reveal(id) {
     document.getElementById(id).classList.remove('d-none');
 }
-
-// function reveal() {
-    // const spoiler = document.getElementById("spoiler");
-    // let s = [...answers].join(" ");
-    // if(pangrams.size > 0) {
-        // s += "<p> <b>Pangrams:</b> " + [...pangrams].join(" ") + "</p>";
-    // }
-    // spoiler.innerHTML = s;
-// }
