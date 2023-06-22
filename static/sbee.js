@@ -2,9 +2,11 @@ const inputWords = document.getElementById("inputWords");
 const scoreField = document.getElementById("score");
 const foundWordsField = document.getElementById("foundWords");
 const alertPlaceholder = document.getElementById('liveAlertPlaceholder');
+const levelsPlaceholder = document.getElementById('levelsPlaceholder');
+const foundCountPlaceholder = document.getElementById('foundCountPlaceholder');
 const answerPlaceholder = document.getElementById("answers");
 const hintsPlaceholder = document.getElementById("hints");
-var score = 0;
+var score = 0, totalScore = 0, amazingScore, geniusScore;
 const foundWords = new Set();
 const hints = new Map();
 const twoLetters = new Map();
@@ -21,6 +23,14 @@ const appendAlert = (message, type) => {
   setTimeout(function() {
         bootstrap.Alert.getOrCreateInstance(document.querySelector(".alert")).close();
     }, 1000)
+}
+
+function computeScore(word) {
+    let score = word.length == 4 ? 1 : word.length;
+    if(pangrams.has(word)) {
+        score += 7;
+    }
+    return score;
 }
 
 function init() {
@@ -43,7 +53,11 @@ function init() {
             twoLetters.set(start, 0);
         }
         twoLetters.set(start, twoLetters.get(start)+1);
+        totalScore += computeScore(answer);
     }
+    amazingScore = Math.ceil(0.5 * totalScore);
+    geniusScore = Math.ceil(0.7 * totalScore);
+    levelsPlaceholder.innerHTML = `A: ${amazingScore} G: ${geniusScore}`;
     if(localStorage.getItem("sbee.date") == new Date().toLocaleDateString()) {
         wordList = localStorage.getItem("sbee.wordList");
     }
@@ -54,12 +68,12 @@ function update(wordList) {
     if(!wordList) wordList = inputWords.value;
     const words = wordList.trim().split(/\s+/g).map(x => x.toLowerCase());
     inputWords.value = "";
+    let prevScore = score;
 
     for (const currentWord of words) {
         if (answers.has(currentWord)) {
-            score += currentWord.length == 4 ? 1 : currentWord.length;
+            score += computeScore(currentWord);
             if(pangrams.has(currentWord)) {
-                score += 7;
                 foundWordsField.innerHTML += " <b>" + currentWord + "</b>";
                 appendAlert(`Pangram: ${currentWord}`, "success");
                 pangrams.delete(currentWord);
@@ -73,10 +87,20 @@ function update(wordList) {
             start = currentWord.slice(0, 2);
             twoLetters.set(start, twoLetters.get(start)-1);
         } else {
-            if(currentWord !== "") appendAlert(`Invalid answer: ${currentWord}`, "danger");
+            if(currentWord !== "") {
+                if(foundWords.has(currentWord)) appendAlert(`${currentWord} already found`, "warning");
+                else appendAlert(`Invalid answer: ${currentWord}`, "danger");
+            }
         }
     }
-    scoreField.innerHTML = "Score: " + score;
+    if ((score > geniusScore) && (prevScore < geniusScore)) {
+        appendAlert("Reached Genius Level!!", "success");
+    }
+    else if((score > amazingScore) && (prevScore < amazingScore)) {
+        appendAlert("Reached Amazing Level!", "success");
+    }
+    scoreField.innerHTML = `Score: ${score} / ${totalScore}`;
+    foundCountPlaceholder.innerHTML = `Found: ${foundWords.size} Remaining: ${answers.size}`;
     localStorage.setItem("sbee.date", new Date().toLocaleDateString());
     localStorage.setItem("sbee.wordList", [...foundWords].join(" "));
     updateHintsAndAnswers();
