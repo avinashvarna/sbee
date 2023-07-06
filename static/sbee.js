@@ -93,10 +93,10 @@ function update(wordList) {
             }
         }
     }
-    if ((score > geniusScore) && (prevScore < geniusScore)) {
+    if ((score >= geniusScore) && (prevScore < geniusScore)) {
         appendAlert("Reached Genius Level!!", "success");
     }
-    else if((score > amazingScore) && (prevScore < amazingScore)) {
+    else if((score >= amazingScore) && (prevScore < amazingScore)) {
         appendAlert("Reached Amazing Level!", "success");
     }
     scoreField.innerHTML = `Score: ${score} / ${totalScore}`;
