@@ -58,7 +58,7 @@ function init() {
     amazingScore = Math.ceil(0.5 * totalScore);
     geniusScore = Math.ceil(0.7 * totalScore);
     levelsPlaceholder.innerHTML = `A: ${amazingScore} G: ${geniusScore}`;
-    if(localStorage.getItem("sbee.date") == new Date().toLocaleDateString()) {
+    if(localStorage.getItem("sbee.puzzle_id") == puzzle_id) {
         wordList = localStorage.getItem("sbee.wordList");
     }
     update(wordList);
@@ -101,7 +101,7 @@ function update(wordList) {
     }
     scoreField.innerHTML = `Score: ${score} / ${totalScore}`;
     foundCountPlaceholder.innerHTML = `Found: ${foundWords.size} Remaining: ${answers.size}`;
-    localStorage.setItem("sbee.date", new Date().toLocaleDateString());
+    localStorage.setItem("sbee.puzzle_id", puzzle_id);
     localStorage.setItem("sbee.wordList", [...foundWords].join(" "));
     updateHintsAndAnswers();
 }
