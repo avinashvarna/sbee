@@ -7,6 +7,8 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 
+	<link rel="stylesheet" href="static/styles.css">
+
     <title>SBee</title>
   </head>
   <body onload="init()">
@@ -23,6 +25,20 @@
           </div>
           <div class="card">
             <div class="card-body">
+			  <div class="progress-container" style="position: relative; margin-top: 30px;">
+				<div id="amazingMark" class="level-mark" style="position: absolute; bottom: 100%; height: 20px; border-right: 2px solid #0d6efd; z-index: 1;">
+				  <span style="position: absolute; bottom: 20px; right: -20px; font-size: 12px;">Amazing</span>
+				</div>
+				<div id="geniusMark" class="level-mark" style="position: absolute; bottom: 100%; height: 20px; border-right: 2px solid #28a745; z-index: 1;">
+				  <span style="position: absolute; bottom: 20px; right: -20px; font-size: 12px;">Genius</span>
+				</div>
+				<div class="progress" style="height: 30px;">
+				  <div id="scoreProgressBar" class="progress-bar bg-info" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+					<span id="scoreProgressBarLabel" class="progress-bar-label">0%</span>
+				  </div>
+				</div>
+			  </div>
+			  <div id="queenBeeBanner" class="queen-bee-banner" style="display: none;">You are the Queen Bee!</div>
               <h5 class="card-title" id="score">Score: 0</h5>
               <p class="card-text" id="levelsPlaceholder">:</p>
               <p class="card-text" id="foundCountPlaceholder">Found:</p>
@@ -31,10 +47,10 @@
           </div>
           <div class="card">
             <div class="card-body">
-                <button type="button" class="btn btn-danger m-1" onclick="reveal('hints')">Hints</button>
+                <button type="button" class="btn btn-danger m-1" onclick="toggleVisibility('hints')">Hints</button>
                 <div id="hints" class="d-none">
                 </div>
-                <button type="button" class="btn btn-danger m-1" onclick="reveal('answers')">Answers</button>
+                <button type="button" class="btn btn-danger m-1" onclick="toggleVisibility('answers')">Answers</button>
                 <div id="answers" class="d-none">
                 </div>
             </div>

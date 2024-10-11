@@ -6,6 +6,11 @@ const levelsPlaceholder = document.getElementById('levelsPlaceholder');
 const foundCountPlaceholder = document.getElementById('foundCountPlaceholder');
 const answerPlaceholder = document.getElementById("answers");
 const hintsPlaceholder = document.getElementById("hints");
+const progressBar = document.getElementById("scoreProgressBar");
+const progressBarLabel = document.getElementById("scoreProgressBarLabel");
+const amazingMark = document.getElementById("amazingMark");
+const geniusMark = document.getElementById("geniusMark");
+const queenBeeBanner = document.getElementById("queenBeeBanner");
 var score = 0, totalScore = 0, amazingScore, geniusScore;
 const foundWords = new Set();
 const hints = new Map();
@@ -55,13 +60,44 @@ function init() {
         twoLetters.set(start, twoLetters.get(start)+1);
         totalScore += computeScore(answer);
     }
-    amazingScore = Math.ceil(0.5 * totalScore);
+	amazingScore = Math.ceil(0.5 * totalScore);
     geniusScore = Math.ceil(0.7 * totalScore);
     levelsPlaceholder.innerHTML = `A: ${amazingScore} G: ${geniusScore}`;
+
+     // Position the level marks
+    amazingMark.style.left = `calc(${(amazingScore / totalScore) * 100}% - 1px)`;
+    geniusMark.style.left = `calc(${(geniusScore / totalScore) * 100}% - 1px)`;
+
     if(localStorage.getItem("sbee.puzzle_id") == puzzle_id) {
         wordList = localStorage.getItem("sbee.wordList");
     }
     update(wordList);
+}
+
+function updateProgressBar() {
+    const percentage = Math.round((score / totalScore) * 100);
+    progressBar.style.width = `${percentage}%`;
+    progressBar.setAttribute('aria-valuenow', percentage);
+    progressBarLabel.textContent = `${percentage}%`;
+
+    // Update progress bar color based on score levels
+    if (score >= geniusScore) {
+        progressBar.classList.remove('bg-warning', 'bg-info', 'bg-primary');
+        progressBar.classList.add('bg-success');
+    } else if (score >= amazingScore) {
+        progressBar.classList.remove('bg-warning', 'bg-info', 'bg-success');
+        progressBar.classList.add('bg-primary');
+    } else {
+        progressBar.classList.remove('bg-warning', 'bg-success', 'bg-primary');
+        progressBar.classList.add('bg-info');
+    }
+
+	// Show Queen Bee banner if max score is reached
+    if (score === totalScore) {
+        queenBeeBanner.style.display = 'block';
+		progressBar.classList.remove('bg-warning', 'bg-info', 'bg-primary');
+		progressBar.classList.add('bg-warning');
+    }
 }
 
 function update(wordList) {
@@ -104,6 +140,7 @@ function update(wordList) {
     localStorage.setItem("sbee.puzzle_id", puzzle_id);
     localStorage.setItem("sbee.wordList", [...foundWords].join(" "));
     updateHintsAndAnswers();
+	updateProgressBar();
 }
 
 function updateHintsAndAnswers() {
@@ -145,6 +182,11 @@ function updateHintsAndAnswers() {
     answerPlaceholder.innerHTML = s;
 }
 
-function reveal(id) {
-    document.getElementById(id).classList.remove('d-none');
+function toggleVisibility(id) {
+    const element = document.getElementById(id);
+    if (element.classList.contains('d-none')) {
+        element.classList.remove('d-none');
+    } else {
+        element.classList.add('d-none');
+    }
 }
