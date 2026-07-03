@@ -15,6 +15,15 @@
     <div class="container m-1">
       <div class="row">
         <div class="col">
+          <div class="d-flex justify-content-between align-items-center mb-2 px-1">
+            <h3 class="m-0 fw-bold text-primary">SBee</h3>
+            <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#statsModal" onclick="showStats()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-bar-chart-fill" viewBox="0 0 16 16">
+                <path d="M1 11a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1zm5-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1zm5-5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1z"/>
+              </svg>
+              Stats
+            </button>
+          </div>
           <div class="card">
             <div class="card-body">
               <h4 class="card-title"><b>{{ data['centerLetter'] }}</b> {{ data['outerLetters'] }} </h4>
@@ -65,5 +74,91 @@
         const pangrams = new Set("{{ data['pangrams'] }}".split(/\s+/g));
 		const puzzle_id = "{{ data['id'] }}";
     </script>
+
+    <!-- Stats Modal -->
+    <div class="modal fade" id="statsModal" tabindex="-1" aria-labelledby="statsModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title fw-bold" id="statsModalLabel">STATISTICS</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-center">
+            <!-- Summary Stats Grid -->
+            <div class="row mb-4">
+              <div class="col-4">
+                <h2 id="statGamesPlayed" class="fw-bold m-0">0</h2>
+                <small class="text-muted text-uppercase" style="font-size: 11px;">Played</small>
+              </div>
+              <div class="col-4">
+                <h2 id="statWinRate" class="fw-bold m-0">0%</h2>
+                <small class="text-muted text-uppercase" style="font-size: 11px;">Amazing+</small>
+              </div>
+              <div class="col-4">
+                <h2 id="statGeniusRate" class="fw-bold m-0">0%</h2>
+                <small class="text-muted text-uppercase" style="font-size: 11px;">Genius+</small>
+              </div>
+            </div>
+
+            <hr>
+
+            <h6 class="fw-bold mb-3 text-start text-uppercase" style="font-size: 13px; letter-spacing: 0.5px;">Level Breakdown</h6>
+            
+            <!-- Stats Breakdown List -->
+            <div class="text-start">
+              <div class="mb-3">
+                <div class="d-flex justify-content-between mb-1" style="font-size: 14px;">
+                  <span>Amazing</span>
+                  <span id="amazingDetails" class="text-muted">0</span>
+                </div>
+                <div class="progress" style="height: 12px;">
+                  <div id="barAmazingNoHints" class="progress-bar bg-success" role="progressbar" style="width: 0%;"></div>
+                  <div id="barAmazingWithHints" class="progress-bar bg-warning" role="progressbar" style="width: 0%;"></div>
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <div class="d-flex justify-content-between mb-1" style="font-size: 14px;">
+                  <span>Genius</span>
+                  <span id="geniusDetails" class="text-muted">0</span>
+                </div>
+                <div class="progress" style="height: 12px;">
+                  <div id="barGeniusNoHints" class="progress-bar bg-success" role="progressbar" style="width: 0%;"></div>
+                  <div id="barGeniusWithHints" class="progress-bar bg-warning" role="progressbar" style="width: 0%;"></div>
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <div class="d-flex justify-content-between mb-1" style="font-size: 14px;">
+                  <span>Queen Bee</span>
+                  <span id="queenDetails" class="text-muted">0</span>
+                </div>
+                <div class="progress" style="height: 12px;">
+                  <div id="barQueenNoHints" class="progress-bar bg-success" role="progressbar" style="width: 0%;"></div>
+                  <div id="barQueenWithHints" class="progress-bar bg-warning" role="progressbar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Legend -->
+            <div class="d-flex justify-content-center gap-3 mt-3" style="font-size: 12px;">
+              <div class="d-flex align-items-center gap-1">
+                <span style="display: inline-block; width: 12px; height: 12px; border-radius: 2px;" class="bg-success"></span>
+                <span class="text-muted">No Hints</span>
+              </div>
+              <div class="d-flex align-items-center gap-1">
+                <span style="display: inline-block; width: 12px; height: 12px; border-radius: 2px;" class="bg-warning"></span>
+                <span class="text-muted">With Hints</span>
+              </div>
+            </div>
+            
+            <!-- Reset Button -->
+            <div class="mt-4 pt-2 border-top">
+              <button type="button" class="btn btn-outline-danger btn-sm" onclick="resetStats()">Reset Stats</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </body>
 </html>
